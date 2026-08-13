@@ -1,0 +1,35 @@
+apiversion: apps/vi
+kind: deployment
+metadata: 
+    name: mongodb
+    namespace: roboshop
+    # these are replica-set labels. 
+    labels: 
+        project: roboshop 
+        component: mongodb 
+        environment: dev
+        tier: db
+        purpose: deployment
+spec:
+    replicas: 1
+    selector:
+        #This is used to select the pods and create the replicaset for those pods. 
+        matchLabels:
+            project: roboshop 
+            component: mongodb 
+            environment: dev
+            tier: db
+            purpose: deployment
+        
+    template: 
+        metadata: 
+            labels: 
+                project: roboshop 
+                component: mongodb 
+                environment: dev
+                tier: db
+                purpose: deployment
+        spec: 
+            containers: 
+                - name: mongodb 
+                  image: 
