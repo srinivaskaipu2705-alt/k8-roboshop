@@ -1,0 +1,73 @@
+apiversion: apps/vi
+kind: deployment
+metadata: 
+    name: catalogue
+    namespace: roboshop  # name space where the pod is going to be created
+    # these are replica-set labels. 
+    labels: 
+        project: roboshop 
+        component: catalogue 
+        environment: dev
+        tier: backend 
+        purpose: deployment
+spec:
+    replicas: 1
+    selector:
+        #This is used to select the pods and create the replicaset for those pods. 
+        matchLabels:
+            project: roboshop 
+            component: catalogue 
+            environment: dev
+            tier: backend   
+            purpose: deployment
+        
+    template: 
+        metadata: 
+            labels: 
+                project: roboshop 
+                component: catalogue 
+                environment: dev
+                tier: backend   
+                purpose: deployment
+        spec: 
+            containers: 
+                - name: catalogue 
+                  image: joindevops/catalogue:v1  # it should be there in our docker hub
+                  ports:
+                  - name: liveness-port
+                    containerPort: 8080
+                  readinessProbe:
+                      httpGet:
+                      port: liveness-port
+                      path: /health
+                      initialDelaySeconds: 10
+                      periodSeconds: 5
+                      failureThreshold: 2
+                      successThreshold: 1 
+                  livenessProbe:
+                      httpGet:
+                      port: liveness-port
+                      path: /health
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
+                      failureThreshold: 2
+                      successThreshold: 1 
+#-----------------------------------------
+#Creating a service for the mongodb pod
+apiversion: v1
+kind: service
+metadata: 
+    name: catalogue
+    namespace: roboshop  # name space where the pod is going to be created
+    # these are service labels. 
+spec: 
+    selector: 
+        project: roboshop 
+        component: catalogue 
+        environment: dev
+        tier: backend
+        purpose: service
+    ports:
+        - protocol: TCP 
+          port: 8080 #service port, which can be anything
+          targetPort: 8080 #pod port, which should match the container port

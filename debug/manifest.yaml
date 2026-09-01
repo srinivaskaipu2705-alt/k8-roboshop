@@ -1,0 +1,15 @@
+apiversion: v1
+kind: pod
+metadata: 
+    name: debug 
+    namespace: roboshop
+    labels: 
+        project: roboshop
+        component: mongodb 
+        environment: dev
+        purpose: debug 
+spec: 
+    containers: 
+        - name: debug 
+          image: joindevops/debug:v1
+          
