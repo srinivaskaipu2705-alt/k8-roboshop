@@ -1,12 +1,12 @@
 apiversion: apps/v1
 kind: deployment
 metadata: 
-    name: mongodb
+    name: redis
     namespace: roboshop    # Name space where the pods will be created.
     # these are replica-set labels. 
     labels: 
         project: roboshop 
-        component: mongodb 
+        component: redis 
         environment: dev
         tier: db
         purpose: deployment
@@ -16,48 +16,48 @@ spec:
         #This is used to select the pods and create the replicaset for those pods. 
         matchLabels:
             project: roboshop 
-            component: mongodb 
+            component: redis 
             environment: dev
             tier: db
             purpose: deployment
         
     spec:
         containers:
-            - name: mongodb
-              image: joindevops/mongodb:v1
+            - name: redis
+              image: redis:7.0
               readinessProbe:
                 tcpSocket:
-                    port: 27017
+                    port: 6379
                 initialDelaySeconds: 10
                 periodSeconds: 5
                 failureThreshold: 3
                 successThreshold: 1
               livenessProbe:
                 tcpSocket:
-                    port: 27017
+                    port: 6379
                 initialDelaySeconds: 8
                 periodSeconds: 4
                 failureThreshold: 2
                 successThreshold: 1
               imagePullPolicy: IfNotPresent
               ports:
-                - containerPort: 27017 # its a must to expose the port for the service to connect to the pod.
+                - containerPort: 6379 # its a must to expose the port for the service to connect to the pod.
 # ------------
-#creating a servicefor mongodb pods.
+#creating a servicefor redis pods.
 apiVersion: v1
 kind: service
 metadata:
-    name: mongodb
+    name: redis
     namespace: roboshop # Name space where the pods will be created.
     # these are service labels.
     labels:
         project: roboshop 
-        component: mongodb 
+        component: redis 
         environment: dev
         tier: db
         purpose: service
     port:
-        - name: mongodb
-          port: 27017  # srevice port which will be used by other pods to connect to this service.
-          targetPort: 27017 # pod port which will be used by the service to connect to the pod.
+        - name: redis
+          port: 6379  # service port which will be used by other pods to connect to this service.
+          targetPort: 6379 # pod port which will be used by the service to connect to the pod.
           protocol: TCP
