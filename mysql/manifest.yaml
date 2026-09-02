@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: configmap
 metadata:
-    name: mysql-config
+    name: mysql
     namespace: roboshop
 data:
     my.cnf: |
@@ -44,6 +44,10 @@ spec:
         containers:
             - name: mysql
               image: joindevops/mysql:v1
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: mysql
               readinessProbe:
                 tcpSocket:
                     port: 3306
@@ -58,7 +62,6 @@ spec:
                 periodSeconds: 10
                 failureThreshold: 5
                 successThreshold: 2
-              imagePullPolicy: IfNotPresent
               ports:
                 - containerPort: 3306 # its a must to expose the port for the service to connect to the pod.
               volumeMounts:

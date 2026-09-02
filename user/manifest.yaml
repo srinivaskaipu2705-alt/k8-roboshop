@@ -1,21 +1,22 @@
 apiVersion: v1
 kind: configmap
 metadata:
-    name: catalogue
+    name: user
     namespace: roboshop
 data:
     MONGO: "true"
-    MONGO_URL: "mongodb://mongodb:27017/catalogue"
+    REDIS_URL: "redis://redis:6379"
+    MONGO_URL: "mongodb://mongodb:27017/users"
 ---
 apiVersion: apps/v1
 kind: deployment
 metadata: 
-    name: catalogue
+    name: user
     namespace: roboshop  # name space where the pod is going to be created
     # these are replica-set labels. 
     labels: 
         project: roboshop 
-        component: catalogue 
+        component: user 
         environment: dev
         tier: backend 
         purpose: deployment
@@ -25,7 +26,7 @@ spec:
         #This is used to select the pods and create the replicaset for those pods. 
         matchLabels:
             project: roboshop 
-            component: catalogue 
+            component: user 
             environment: dev
             tier: backend   
             purpose: deployment
@@ -34,18 +35,18 @@ spec:
         metadata: 
             labels: 
                 project: roboshop 
-                component: catalogue 
+                component: user 
                 environment: dev
                 tier: backend   
                 purpose: deployment
         spec: 
             containers: 
-                - name: catalogue 
-                  image: joindevops/catalogue:v1  # it should be there in our docker hub
+                - name: user 
+                  image: joindevops/user:v1  # it should be there in our docker hub
                   imagePullPolicy: Always
                   envFrom:
                     - configMapRef:
-                        name: catalogue
+                        name: user
                   ports:
                   - name: liveness-port
                     containerPort: 8080
@@ -70,13 +71,13 @@ spec:
 apiVersion: v1
 kind: service
 metadata: 
-    name: catalogue
+    name: user
     namespace: roboshop  # name space where the pod is going to be created
     # these are service labels. 
 spec: 
     selector: 
         project: roboshop 
-        component: catalogue 
+        component: user 
         environment: dev
         tier: backend
         purpose: service

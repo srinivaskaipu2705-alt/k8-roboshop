@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: deployment
 metadata: 
-    name: redis
+    name: rabbitmq
     namespace: roboshop    # Name space where the pods will be created.
     # these are replica-set labels. 
     labels: 
         project: roboshop 
-        component: redis 
+        component: rabbitmq 
         environment: dev
         tier: db
         purpose: deployment
@@ -16,51 +16,51 @@ spec:
         #This is used to select the pods and create the replicaset for those pods. 
         matchLabels:
             project: roboshop 
-            component: redis 
+            component: rabbitmq 
             environment: dev
             tier: db
             purpose: deployment
         
     spec:
         containers:
-            - name: redis
-              image: redis:7.0
+            - name: rabbitmq
+              image: rabbitmq:3
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
-                    name: redis
+                    name: rabbitmq
               readinessProbe:
                 tcpSocket:
-                    port: 6379
-                initialDelaySeconds: 10
-                periodSeconds: 5
-                failureThreshold: 3
-                successThreshold: 1
+                    port: 5672
+                initialDelaySeconds: 15
+                periodSeconds: 10
+                failureThreshold: 4
+                successThreshold: 2
               livenessProbe:
                 tcpSocket:
-                    port: 6379
-                initialDelaySeconds: 8
-                periodSeconds: 4
+                    port: 5672
+                initialDelaySeconds: 20
+                periodSeconds: 10
                 failureThreshold: 2
                 successThreshold: 1
               ports:
-                - containerPort: 6379 # its a must to expose the port for the service to connect to the pod.
+                - containerPort: 5672 # its a must to expose the port for the service to connect to the pod.
 # ------------
-#creating a servicefor redis pods.
+#creating a servicefor rabbitmq pods.
 apiVersion: v1
 kind: service
 metadata:
-    name: redis
+    name: rabbitmq
     namespace: roboshop # Name space where the pods will be created.
     # these are service labels.
     labels:
         project: roboshop 
-        component: redis 
+        component: rabbitmq 
         environment: dev
         tier: db
         purpose: service
     port:
-        - name: redis
-          port: 6379  # service port which will be used by other pods to connect to this service.
-          targetPort: 6379 # pod port which will be used by the service to connect to the pod.
+        - name: rabbitmq
+          port: 5672  # service port which will be used by other pods to connect to this service.
+          targetPort: 5672 # pod port which will be used by the service to connect to the pod.
           protocol: TCP
