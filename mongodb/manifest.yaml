@@ -1,4 +1,4 @@
-apiversion: apps/v1
+apiVersion: apps/v1
 kind: deployment
 metadata: 
     name: mongodb
@@ -37,8 +37,8 @@ spec:
                     port: 27017
                 initialDelaySeconds: 8
                 periodSeconds: 4
-                failureThreshold: 2
-                successThreshold: 1
+                failureThreshold: 5
+                successThreshold: 2
               imagePullPolicy: IfNotPresent
               ports:
                 - containerPort: 27017 # its a must to expose the port for the service to connect to the pod.

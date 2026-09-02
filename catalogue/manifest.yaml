@@ -1,4 +1,13 @@
-apiversion: apps/vi
+apiVersion: v1
+kind: configmap
+metadata:
+    name: catalogue-config
+    namespace: roboshop
+data:
+    MONGO: catalogue
+    MONGO_URL: "mongodb://mongodb:27017/catalogue"
+---
+apiVersion: apps/v1
 kind: deployment
 metadata: 
     name: catalogue
@@ -54,7 +63,7 @@ spec:
                       successThreshold: 1 
 #-----------------------------------------
 #Creating a service for the mongodb pod
-apiversion: v1
+apiVersion: v1
 kind: service
 metadata: 
     name: catalogue
