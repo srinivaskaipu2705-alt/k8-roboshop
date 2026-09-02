@@ -61,7 +61,8 @@ metadata:
     name: frontend
     namespace: roboshop  # name space where the pod is going to be created
     # these are service labels. 
-spec: 
+spec:
+    type: LoadBalancer
     selector: 
         project: roboshop 
         component: frontend 
