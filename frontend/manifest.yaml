@@ -1,28 +1,14 @@
-apiVersion: v1
-kind: configmap
-metadata:
-    name: payment
-    namespace: roboshop
-data:
-    CART_HOST: "cart"
-    CART_PORT: "8080"
-    USER_HOST: "user"
-    USER_PORT: "8080"
-    AMQP_HOST: "rabbitmq"
-    AMQP_USER: "roboshop"
-    AMQP_PASS: "roboshop123"
----
 apiVersion: apps/v1
 kind: deployment
 metadata: 
-    name: payment
+    name: frontend
     namespace: roboshop  # name space where the pod is going to be created
     # these are replica-set labels. 
     labels: 
         project: roboshop 
-        component: payment 
+        component: frontend 
         environment: dev
-        tier: backend 
+        tier: frontend 
         purpose: deployment
 spec:
     replicas: 1
@@ -30,34 +16,31 @@ spec:
         #This is used to select the pods and create the replicaset for those pods. 
         matchLabels:
             project: roboshop 
-            component: payment 
+            component: frontend 
             environment: dev
-            tier: backend   
+            tier: frontend   
             purpose: deployment
         
     template: 
         metadata: 
             labels: 
                 project: roboshop 
-                component: payment 
+                component: frontend 
                 environment: dev
-                tier: backend   
+                tier: frontend   
                 purpose: deployment
         spec: 
             containers: 
-                - name: payment 
-                  image: joindevops/payment:v1  # it should be there in our docker hub
+                - name: frontend 
+                  image: joindevops/frontend:v1  # it should be there in our docker hub
                   imagePullPolicy: Always
-                  envFrom:
-                    - configMapRef:
-                        name: payment
                   ports:
                   - name: liveness-port
-                    containerPort: 8080
+                    containerPort: 80
                   readinessProbe:
                       httpGet:
                       port: liveness-port
-                      path: /health
+                      path: /
                       initialDelaySeconds: 10
                       periodSeconds: 5
                       failureThreshold: 2
@@ -65,7 +48,7 @@ spec:
                   livenessProbe:
                       httpGet:
                       port: liveness-port
-                      path: /health
+                      path: /
                       initialDelaySeconds: 8
                       periodSeconds: 4
                       failureThreshold: 2
@@ -75,17 +58,17 @@ spec:
 apiVersion: v1
 kind: service
 metadata: 
-    name: payment
+    name: frontend
     namespace: roboshop  # name space where the pod is going to be created
     # these are service labels. 
 spec: 
     selector: 
         project: roboshop 
-        component: payment 
+        component: frontend 
         environment: dev
-        tier: backend
+        tier: frontend
         purpose: service
     ports:
         - protocol: TCP 
-          port: 8080 #service port, which can be anything
-          targetPort: 8080 #pod port, which should match the container port
+          port: 80 #service port, which can be anything
+          targetPort: 80 #pod port, which should match the container port
