@@ -65,7 +65,7 @@ spec:
                       periodSeconds: 4
                       failureThreshold: 2
                       successThreshold: 1 
-#-----------------------------------------
+---
 #Creating a service for the mongodb pod
 apiVersion: v1
 kind: service

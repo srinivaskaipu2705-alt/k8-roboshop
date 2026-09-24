@@ -42,7 +42,7 @@ spec:
               imagePullPolicy: IfNotPresent
               ports:
                 - containerPort: 27017 # its a must to expose the port for the service to connect to the pod.
-# ------------
+---
 #creating a servicefor mongodb pods.
 apiVersion: v1
 kind: service

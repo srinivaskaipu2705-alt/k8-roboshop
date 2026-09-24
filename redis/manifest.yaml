@@ -21,31 +21,39 @@ spec:
             tier: db
             purpose: deployment
         
-    spec:
-        containers:
-            - name: redis
-              image: redis:7.0
-              imagePullPolicy: Always
-              envFrom:
-                - configMapRef:
-                    name: redis
-              readinessProbe:
-                tcpSocket:
-                    port: 6379
-                initialDelaySeconds: 10
-                periodSeconds: 5
-                failureThreshold: 3
-                successThreshold: 1
-              livenessProbe:
-                tcpSocket:
-                    port: 6379
-                initialDelaySeconds: 8
-                periodSeconds: 4
-                failureThreshold: 2
-                successThreshold: 1
-              ports:
-                - containerPort: 6379 # its a must to expose the port for the service to connect to the pod.
-# ------------
+    template:
+        metadata:
+            labels:
+                project: roboshop
+                component: redis
+                environment: dev
+                tier: db
+                purpose: deployment
+        spec:
+            containers:
+                - name: redis
+                  image: redis:7.0
+                  imagePullPolicy: Always
+                  envFrom:
+                    - configMapRef:
+                        name: redis
+                  readinessProbe:
+                    tcpSocket:
+                        port: 6379
+                    initialDelaySeconds: 10
+                    periodSeconds: 5
+                    failureThreshold: 3
+                    successThreshold: 1
+                  livenessProbe:
+                    tcpSocket:
+                        port: 6379
+                    initialDelaySeconds: 8
+                    periodSeconds: 4
+                    failureThreshold: 2
+                    successThreshold: 1
+                  ports:
+                    - containerPort: 6379 # its a must to expose the port for the service to connect to the pod.
+---
 #creating a servicefor redis pods.
 apiVersion: v1
 kind: service
