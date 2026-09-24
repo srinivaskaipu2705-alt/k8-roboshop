@@ -56,16 +56,16 @@ spec:
                     containerPort: 8080
                   readinessProbe:
                       httpGet:
-                      port: liveness-port
-                      path: /health
+                        port: liveness-port
+                        path: /health
                       initialDelaySeconds: 10
                       periodSeconds: 5
                       failureThreshold: 2
                       successThreshold: 1 
                   livenessProbe:
                       httpGet:
-                      port: liveness-port
-                      path: /health
+                        port: liveness-port
+                        path: /health
                       initialDelaySeconds: 8
                       periodSeconds: 4
                       failureThreshold: 2
